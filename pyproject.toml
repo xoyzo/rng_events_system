@@ -1,0 +1,7 @@
+[project]
+name = "rng_events_system"
+version = "1.0.0"
+description = "Dynamic RNG event system for BallsDex"
+dependencies = [
+    "ballsdex>=3.0.0"
+]
