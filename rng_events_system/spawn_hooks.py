@@ -1,19 +1,12 @@
-from .engine import get_modifiers
+from .models import RNGEvent
 
 
-async def modify_spawn(ball, base_rate=1.0, regime=None, special=None, guild_id=None):
+async def apply_spawn_modifiers(base_chance: float) -> float:
+    events = RNGEvent.objects.filter(active=True, category="spawn")
 
-    mods = await get_modifiers(
-        ball=ball,
-        regime=regime,
-        special=special,
-        guild_id=guild_id
-    )
+    modifier = 1.0
 
-    return (
-        base_rate
-        * mods["global"]
-        * mods["collectible"]
-        * mods["special"]
-        * mods["regime"]
-    )
+    for event in events:
+        modifier *= event.multiplier
+
+    return base_chance * modifier
