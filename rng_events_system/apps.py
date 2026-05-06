@@ -1,6 +1,9 @@
 from django.apps import AppConfig
 
-class RNGEventsSystemConfig(AppConfig):
+
+class RngEventsSystemConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
     name = "rng_events_system"
-    verbose_name = "RNG Events System"
-    dpy_package = "rng_events_system.ext"
+
+    def ready(self):
+        import rng_events_system.spawn_hooks  # ensures hooks load
