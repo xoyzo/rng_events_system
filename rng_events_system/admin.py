@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import RNGEvent
 
 
@@ -7,12 +8,29 @@ class RNGEventAdmin(admin.ModelAdmin):
 
     list_display = (
         "name",
-        "event_type",
+        "scope",
         "multiplier",
         "active",
-        "start_datetime",
-        "end_datetime",
+        "trigger_source",
     )
 
-    list_filter = ("active", "event_type")
-    search_fields = ("name",)
+    list_filter = (
+        "scope",
+        "active",
+        "trigger_source",
+        "target_collectible",
+        "target_regime",
+        "target_special",
+        "target_economy",
+    )
+
+    autocomplete_fields = (
+        "target_collectible",
+        "target_regime",
+        "target_special",
+        "target_economy",
+    )
+
+    search_fields = (
+        "name",
+    )
