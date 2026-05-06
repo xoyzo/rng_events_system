@@ -1,24 +1,17 @@
 from discord.ext import commands
-from discord import app_commands
-
-from rng_events_system.models import RNGEvent
+from .models import RNGEvent
 
 
-class RNGCog(commands.Cog):
-
+class RNGEventsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.command()
+    async def eventstatus(self, ctx):
+        events = RNGEvent.objects.filter(active=True)
 
-    @app_commands.command()
-    async def rng_list(self, interaction):
+        msg = "**Active RNG Events:**\n"
+        for e in events:
+            msg += f"- {e.name} ({e.category}) x{e.multiplier}\n"
 
-        events = []
-
-        async for event in RNGEvent.objects.all():
-            events.append(event.name)
-
-        await interaction.response.send_message(
-            "\n".join(events),
-            ephemeral=True
-        )
+        await ctx.send(msg)
