@@ -1,26 +1,44 @@
 import asyncio
 from django.utils import timezone
 from .models import RNGEvent
+from .announcer import EventAnnouncer
 
 
-async def scheduler_loop():
+class EventScheduler:
 
-    while True:
+    def __init__(self, bot):
+        self.bot = bot
 
+    async def run_loop(self):
+        while True:
+            await self.check_events()
+            await asyncio.sleep(60)
+
+    async def check_events(self):
         now = timezone.now()
 
-        events = RNGEvent.objects.all()
+        events = RNGEvent.objects.filter(active=True)
 
-        async for event in events:
+        for event in events:
+            if event.start_datetime and event.start_datetime > now:
+                continue
+            if event.end_datetime and event.end_datetime < now:
+                event.active = False
+                event.save()
+                continue
 
-            if event.start_datetime and not event.active:
-                if now >= event.start_datetime:
-                    event.active = True
-                    await event.asave()
+            if event.announce:
+                await self.broadcast(event)
 
-            if event.end_datetime and event.active:
-                if now >= event.end_datetime:
-                    event.active = False
-                    await event.asave()
+    async def broadcast(self, event):
+        msg = EventAnnouncer.format_message(event)
 
-        await asyncio.sleep(30)
+        for guild in self.bot.guilds:
+            await self.send_to_guild(guild, msg)
+
+    async def send_to_guild(self, guild, msg):
+        # replace with your spawn channel logic
+        for channel in guild.text_channels:
+            if channel.permissions_for(guild.me).send_messages:
+                await channel.send(msg)
+                break
