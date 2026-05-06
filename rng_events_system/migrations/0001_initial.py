@@ -1,32 +1,5 @@
 from django.db import migrations, models
-
-
-def create_default_events(apps, schema_editor):
-
-    RNGEvent = apps.get_model(
-        "rng_events_system",
-        "RNGEvent"
-    )
-
-    if not RNGEvent.objects.exists():
-
-        RNGEvent.objects.create(
-            name="Double Spawn Hour",
-            category="spawn",
-            scope="global",
-            multiplier=2.0,
-            duration_minutes=60,
-            announcement_text="Spawn rates doubled."
-        )
-
-        RNGEvent.objects.create(
-            name="Economic Surge",
-            category="economy",
-            scope="local",
-            multiplier=1.5,
-            duration_minutes=120,
-            announcement_text="Economy boosted."
-        )
+import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
@@ -34,47 +7,26 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        (
-            "bd_models",
-            "0014_alter_ball_options_alter_ballinstance_options_and_more"
-        ),
+        ("bd_models", "0014_alter_ball_options_alter_ballinstance_options_and_more"),
+        ("collect", "0001_initial"),
     ]
 
     operations = [
-
         migrations.CreateModel(
             name="RNGEvent",
             fields=[
-                ("id", models.BigAutoField(
-                    auto_created=True,
-                    primary_key=True,
-                    serialize=False,
-                    verbose_name="ID"
-                )),
-                ("name", models.CharField(
-                    max_length=50,
-                    unique=True
-                )),
-                ("category", models.CharField(
-                    max_length=20
-                )),
-                ("scope", models.CharField(
-                    max_length=20
-                )),
-                ("multiplier", models.FloatField(
-                    default=1.0
-                )),
-                ("duration_minutes", models.IntegerField(
-                    default=60
-                )),
-                ("active", models.BooleanField(
-                    default=False
-                )),
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField(blank=True)),
+                ("category", models.CharField(max_length=20)),
+                ("scope", models.CharField(max_length=20)),
+                ("multiplier", models.FloatField(default=1.0)),
+                ("active", models.BooleanField(default=False)),
+                ("start_datetime", models.DateTimeField(null=True, blank=True)),
+                ("end_datetime", models.DateTimeField(null=True, blank=True)),
+                ("recurring", models.BooleanField(default=False)),
+                ("recurrence_interval_hours", models.IntegerField(null=True, blank=True)),
+                ("announce", models.BooleanField(default=True)),
             ],
         ),
-
-        migrations.RunPython(
-            create_default_events
-        ),
-
     ]
