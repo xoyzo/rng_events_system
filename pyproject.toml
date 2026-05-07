@@ -1,7 +1,7 @@
 [project]
-name = "rng_events_system"
+name = "rng-events-system"
 version = "1.0.0"
-description = "Dynamic RNG event system for BallsDex"
-dependencies = [
-    "ballsdex>=3.0.0"
-]
+description = "Server event system for BallsDex"
+readme = "README.md"
+
+dependencies = []
