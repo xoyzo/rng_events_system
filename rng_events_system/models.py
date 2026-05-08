@@ -19,10 +19,8 @@ class RNGEvent(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
 
-    # NEW: fully editable Discord message template
     message = models.TextField(
         default="⚡ {event_name} is active!",
-        help_text="Message sent when event triggers. Supports {event_name}, {multiplier}, etc."
     )
 
     description = models.TextField(blank=True)
@@ -46,11 +44,7 @@ class RNGEvent(models.Model):
 
     announce = models.BooleanField(default=True)
 
-    # NEW: allows admin to force test events instantly
-    test_run = models.BooleanField(
-        default=False,
-        help_text="If enabled, event can be manually triggered for testing"
-    )
+    test_run = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} ({self.category})"
